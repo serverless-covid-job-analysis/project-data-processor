@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: >
+  Covid Data Processor
+
+Globals:
+  Function:
+    Timeout: 600
+    MemorySize: 3000
+
+Parameters:
+  CROSSACCOUNTLAMBDAROLE:
+    Description: 'Required. Role that Data fetch Lambdas are going to use for assuming role.'
+    Type: 'String'
+    Default: 'arn:aws:iam::841240557262:role/covid_role'
+  ENV:
+    Description: 'Required. Environment to be deployed.'
+    Type: 'String'
+    Default: 'local'
+
+
+Resources:
+  TrainOutwardData:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: train_outward_data.lambda_handler
+      Runtime: python3.7
+      Role: !Ref CROSSACCOUNTLAMBDAROLE
+      #Policies: AmazonCognitoPowerUser
+      CodeUri: ./
+      Description: 'Train Outward Data'
+      Environment:
+          Variables:
+            env: !Ref ENV
